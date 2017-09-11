@@ -1,0 +1,21 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: False
+  tasks:
+    - name: Install python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      become: True
+      changed_when: False
+
+- name: Converge
+  hosts: all
+  become: yes
+  vars:
+    php_enabled: yes
+    php_version: 7.1
+    php_fpm_enabled: yes
+    php_fpm_version: 7.1
+  roles:
+    - role: role-php
+    - role: role-php-fpm
