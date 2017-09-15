@@ -1,4 +1,4 @@
 - name: role-php
   src: git@github.com:blunix/role-php
-  version: feature/init
+  version: 1.0.0
   scm: git
