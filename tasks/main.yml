@@ -1,0 +1,4 @@
+- include: php_fpm.yml
+  when: php_fpm_enabled
+  tags:
+    - php-fpm

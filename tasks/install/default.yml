@@ -1,0 +1,5 @@
+- name: install php{{ php_fpm_version }}-fpm
+  apt:
+    pkg: php{{ php_fpm_version }}-fpm
+    state: installed
+    update_cache: no
