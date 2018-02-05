@@ -1,16 +1,13 @@
-Role PHP-FPM
-============
+# Role PHP-FPM
 
 This role installs and configures PHP-FPM.
 
-Example Playbook
-----------------
+# Example Playbook
 
 ```yaml
 - hosts: all
   vars:
     php_fpm_enabled: yes
-    php_fpm_version: 7.0
   roles:
     - blunix.role-php-fpm
 ```
@@ -20,7 +17,6 @@ Using Blunix' `role-php`:
 - hosts: all
   vars:
     php_enabled: yes
-    php_version: 7.1
     php_fpm_enabled: yes
     php_fpm_version: '{{ php_version }}'
   roles:
@@ -28,23 +24,22 @@ Using Blunix' `role-php`:
     - blunix.role-php-fpm
 ```
 
-License
--------
+# License
 
-Apache2
+Apache-2.0
 
-Author Information
-------------------
+# Author Information
 
-Service and support for orchestrated hosting environments, continuous
-integration/deployment/delivery and various Linux and open-source technology
-stacks are available from:
+Service and support for orchestrated hosting environments,
+continuous integration/deployment/delivery and various Linux
+and open-source technology stacks are available from:
 
 ```
-Blunix GmbH - Professional Linux Service
+Blunix GmbH - Consulting for Linux Hosting 24/7
 Glogauer Straße 21
 10999 Berlin - Germany
 
 Web: www.blunix.org
-Email: mailto:service@blunix.org
+Email: service[at]blunix.org
+Phone: (+49) 30 / 12 08 39 90
 ```
