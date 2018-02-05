@@ -8,5 +8,5 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 PHP_FPM_VERSION = '7.1'
 
 
-def test_binary(File):
-    assert File('/usr/sbin/php-fpm{}'.format(PHP_FPM_VERSION)).exists
+def test_php_fpm_conf_exists(host):
+    assert host.file("/etc/php/{}/fpm/php-fpm.conf".format(PHP_FPM_VERSION)).exists
