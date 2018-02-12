@@ -1,4 +1,4 @@
-- include: php_fpm.yml
+- include_tasks: php_fpm.yml
   when: php_fpm_enabled
   tags:
     - php-fpm
