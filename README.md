@@ -19,8 +19,11 @@ Using it with `blunix.role-php`:
 - hosts: all
   vars:
     php_enabled: yes
+    php_version: 7.1
     php_fpm_enabled: yes
     php_fpm_version: '{{ php_version }}'
+    # Set this to etc/php5 for php5
+    php_fpm_config_directory: etc/{{ php_version }}
   roles:
     - blunix.role-php
     - blunix.role-php-fpm
