@@ -122,4 +122,5 @@ systemd_interval = {{ php_fpm_systemd_interval | default("10s;") }}
 ; Relative path can also be used. They will be prefixed by:
 ;  - the global prefix if its been set (-p argument)
 ;  - /usr otherwise
-include=/{{ php_fpm_config_directory }}/fpm/pool.d/*.conf
+include=/etc/php/{{ php_version }}/fpm/pool.d/*.conf
+
