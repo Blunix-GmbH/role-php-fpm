@@ -44,19 +44,6 @@
     group: root
     mode: 0644
 
-- name: create chdir directories for each php-fpm pool
-  file:
-    path: "{{ php_fpm_pool_item['chdir'] }}"
-    state: directory
-    owner: www-data
-    group: www-data
-    mode: 0755
-  with_items: "{{ php_fpm_pools }}"
-  loop_control:
-    loop_var: php_fpm_pool_item
-  notify: restart systemd-tmpfiles-clean.timer
-
-
 - name: configure php-fpm pools
   template:
     src: "etc/php/all_versions/fpm/pool.d/pool.conf.j2"
