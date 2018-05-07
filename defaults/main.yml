@@ -1,3 +1,7 @@
+# Add fpm to the list of php_packages and convert the resulting
+# list into a set in order to remove possible duplicates.
+php_packages: "{{ set(php_packages + ['fpm']) }}"
+
 php_fpm_enabled: no
 php_fpm_pools:
   - name: www

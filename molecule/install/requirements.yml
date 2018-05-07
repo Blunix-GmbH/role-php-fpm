@@ -1,4 +1,4 @@
 - src: git@github.com:blunix/role-php.git
-  name: role-php
-  version: 1.0.2
+  name: blunix.role-php
+  version: feature/production-prep
   scm: git

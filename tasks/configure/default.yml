@@ -1,57 +1,12 @@
-- name: deploy php-fpm.conf
-  template:
-    src: "etc/php/all_versions/fpm/php-fpm.conf.j2"
-    dest: "/etc/php/{{ php_fpm_version }}/fpm/php-fpm.conf"
-    mode: 0644
-    owner: root
-    group: root
-  notify: restart php-fpm
-
-- name: template custom php.ini files for php-fpm
-  template:
-    src: "etc/php/all_versions/custom-php.ini.j2"
-    dest: "{{ php_fpm_custom_ini['path'] }}"
-  vars:
-    php_fpm_custom_ini_vars: "{{ php_fpm_custom_ini['vars'] }}"
-  with_items: "{{ php_fpm_custom_inis }}"
-  loop_control:
-    loop_var: php_fpm_custom_ini
-  notify: restart php-fpm
-
-- name: remove default php-fpm pool www.conf
+- name: create pool configuration directory
   file:
-    state: absent
-    path: "/etc/php/{{ php_fpm_version }}/fpm/pool.d/www.conf"
-  notify: restart php-fpm
-
-- name: create tmpdir for each php-fpm pool
-  file:
-    path: "{{ php_fpm_pool_item['tmpdir'] }}"
+    path: /etc/php/fpm/pool.d/
     state: directory
-    owner: www-data
-    group: www-data
-    mode: 0755
-  with_items: "{{ php_fpm_pools }}"
-  loop_control:
-    loop_var: php_fpm_pool_item
-
-- name: disable automatic cleaning for /tmp via systemd
-  file:
-    src: usr/lib/tmpfiles.d/tmp.conf
-    dest: /usr/lib/tmpfiles.d/tmp.conf
-    state: file
     owner: root
     group: root
-    mode: 0644
+    mode: 0755
 
 - name: configure php-fpm pools
   template:
-    src: "etc/php/all_versions/fpm/pool.d/pool.conf.j2"
-    dest: "/etc/php/{{ php_fpm_version }}/fpm/pool.d/{{ php_fpm_pool_item['name'] }}.conf"
-    mode: 0644
-    owner: root
-    group: root
-  with_items: "{{ php_fpm_pools }}"
-  loop_control:
-    loop_var: php_fpm_pool_item
-  notify: restart php-fpm
+    src: etc/php//fpm/pool.d/pool.conf.j2
+    dest: /etc/php/fpm/pool.d/{{ php_fpm_pool_item['name'] }}.conf
