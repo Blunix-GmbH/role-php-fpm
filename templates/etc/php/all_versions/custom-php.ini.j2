@@ -1,0 +1,7 @@
+{% for section in php_fpm_custom_ini_vars %}
+[{{ section}}]
+{% for key in php_fpm_custom_ini_vars[section] %}
+{{ key }} = {{ php_fpm_custom_ini_vars[section][key] }}
+{% endfor %}
+
+{% endfor %}
