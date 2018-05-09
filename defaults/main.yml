@@ -5,4 +5,3 @@ php_packages: "{{ set(php_packages + ['fpm']) }}"
 php_fpm_enabled: no
 php_fpm_pools:
   - name: www
-php_fpm_version: 7.1
