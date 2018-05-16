@@ -1,0 +1,34 @@
+[{{ php_fpm_pool_name }}]
+
+; User / group and directory related settings
+user = {{ php_fpm_pool_name }}
+group = {{ php_fpm_pool_name }}
+chdir = {{ php_fpm_chdir | default('/var/www/' + php_fpm_pool_name + '/htdocs') }}
+listen = /var/run/php/{{ php_fpm_pool_name }}.sock
+listen.owner = {{ php_fpm_pool_name }}
+listen.group = {{ php_fpm_pool_name }}
+env[TMP] = /var/www/tmp/{{ php_fpm_pool_name }}
+env[TMPDIR] = /var/www/tmp/{{ php_fpm_pool_name }}
+env[TEMP] = /var/www/tmp/{{ php_fpm_pool_name }}
+
+; php-fpm worker mode settings
+pm = {{ php_fpm_pool_pm | default('static') }}
+pm.max_children = {{ php_fpm_pool_max_children | default("5") }}
+pm.start_servers = {{ php_fpm_pool_start_servers | default("2") }}
+pm.min_spare_servers = {{ php_fpm_pool_min_spare_servers | default("1") }}
+pm.max_spare_servers = {{ php_fpm_pool_max_spare_servers | default("3") }}
+pm.process_idle_timeout = {{ php_fpm_pool_process_idle_timeout | default("10s") }}
+pm.max_requests = {{ php_fpm_pool_max_requests | default("0") }}
+
+; logging settings TODO can't find doc on how to send all of this to syslog
+catch_workers_output = yes
+access.log = /var/log/php/{{ php_version }}/{{ php_fpm_pool_name }}.access.log
+php_admin_flag[log_errors] = on
+php_admin_value[error_log] = /var/log/php/{{ php_version }}/{{ php_fpm_pool_name }}.error.log
+slowlog = /var/log/php/{{ php_version }}/{{ php_fpm_pool_name }}.slow.log
+request_slowlog_timeout = 10
+
+; additional settings
+{% for key in php_fpm_pool_additional_variables | default({}) %}
+{{ key }} = {{ php_fpm_pool_additional_variables[key] }}
+{% endfor %}

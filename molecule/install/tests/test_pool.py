@@ -7,7 +7,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 PHP_FPM_VERSION = '7.1'
 PHP_FPM_POOL = {
-    'name': 'www',
+    'name': 'www_example_com',
 }
 
 

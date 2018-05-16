@@ -1,36 +1,108 @@
+- name: template php-fpm.conf
+  template:
+    src: "etc/php/all_versions/fpm/php-fpm.conf.j2"
+    dest: "/etc/php/{{ php_version }}/fpm/php-fpm.conf"
+    mode: 0644
+    owner: root
+    group: root
+  notify: restart php-fpm
+
 - name: remove default php-fpm pool www.conf
   file:
     state: absent
     path: "/etc/php/{{ php_version }}/fpm/pool.d/www.conf"
   notify: restart php-fpm
 
-- name: configure custom php-fpm pools
+- name: create log directory for this php_version (TODO how can ALL logs go to syslog?)
+  file:
+    name: "/var/log/php/{{ php_version }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0775
+
+- name: create group for php-fpm pool
+  group:
+    name: "{{ php_fpm_pool_name }}"
+    gid: "{{ php_fpm_pool_uid_gid }}"
+    system: true
+
+- name: allow www-data user to read files with group permissions
+  user:
+    name: www-data
+    system: true
+    uid: 33
+    shell: /usr/sbin/nologin
+    home: /var/www
+    groups:
+      - www-data
+      - "{{ php_fpm_pool_name }}"
+    append: yes
+
+- name: create user for php-fpm pool
+  user:
+    name: "{{ php_fpm_pool_name }}"
+    uid: "{{ php_fpm_pool_uid_gid }}"
+    group: "{{ php_fpm_pool_name }}"
+    groups:
+      - "{{ php_fpm_pool_name }}"
+      - www-data
+    append: no
+    home: "/var/www/{{ php_fpm_pool_name }}"
+
+- name: create chdir directory for php-fpm pool
+  file:
+    state: directory
+    path: "/var/www/{{ php_fpm_pool_name }}/{{ php_fpm_pool_chdir }}"
+    owner: "{{ php_fpm_pool_name }}"
+    group: "{{ php_fpm_pool_name }}"
+    mode: 0750
+  when: php_fpm_pool_chdir is defined
+
+- name: create main tmpdir for all php-fpm pools of this php_version
+  file:
+    state: directory
+    path: /var/tmp
+    owner: www-data
+    group: www-data
+    mode: 0550
+
+- name: create tmpdir for php-fpm pool
+  file:
+    state: directory
+    path: "/var/tmp/{{ php_fpm_pool_name }}"
+    owner: "{{ php_fpm_pool_name }}"
+    group: "{{ php_fpm_pool_name }}"
+    mode: 0770
+
+- name: mount tmpfs to tmpdir for php-fpm pool
+  mount:
+    fstype: tmpfs
+    src: tmpfs
+    path: "/var/tmp/{{ php_fpm_pool_name }}"
+    state: mounted
+    opts: "defaults,noexec,nosuid,size={{ php_fpm_pool_tmpdir_tmpfs_size }},uid={{ php_fpm_pool_uid_gid }},gid={{ php_fpm_pool_uid_gid }}"
+  when: php_fpm_pool_tmpdir_tmpfs_size is defined
+
+- name: template custom php-fpm pool
   template:
     src: "etc/php/all_versions/fpm/pool.d/pool.conf.j2"
-    dest: "/etc/php/{{ php_fpm_version }}/fpm/pool.d/{{ php_fpm_pool_item['name'] }}.conf"
+    dest: "/etc/php/{{ php_version }}/fpm/pool.d/{{ php_fpm_pool_name }}.conf"
+    mode: 0644
     owner: root
     group: root
-    mode: 0644
-  with_items: "{{ php_fpm_pools }}"
-  loop_control:
-    loop_var: php_fpm_pool_item
   notify: restart php-fpm
 
-- name: create tmpdir for each php-fpm pool
-   file:
-￼     path: "{{ php_fpm_pool_item['tmpdir'] }}"
-     owner: www-data
-     group: www-data
-     mode: 0750
-  with_items: "{{ php_fpm_pools }}"
-  loop_control:
-    loop_var: php_fpm_pool_item
-
-- name: disable automatic cleaning for /tmp via systemd
-  file:
-    src: usr/lib/tmpfiles.d/tmp.conf
-    dest: /usr/lib/tmpfiles.d/tmp.conf
-    state: file
+- name: template custom php.ini files for php-fpm
+  template:
+    src: "etc/php/all_versions/custom-php.ini.j2"
+    dest: "/etc/php/{{ php_version }}/{{ php_fpm_custom_ini['path'] }}"
     owner: root
     group: root
     mode: 0644
+  vars:
+    php_fpm_custom_ini_vars: "{{ php_fpm_custom_ini['vars'] }}"
+  with_items: "{{ php_fpm_custom_inis }}"
+  loop_control:
+    loop_var: php_fpm_custom_ini
+  notify: restart php-fpm

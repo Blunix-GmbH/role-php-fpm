@@ -1,5 +1,7 @@
 {% for section in php_fpm_custom_ini_vars %}
+{% if section != 'no_section' %}
 [{{ section}}]
+{% endif %}
 {% for key in php_fpm_custom_ini_vars[section] %}
 {{ key }} = {{ php_fpm_custom_ini_vars[section][key] }}
 {% endfor %}
