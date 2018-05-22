@@ -76,12 +76,22 @@
         php_admin_value[max_input_time]: 300
         php_admin_value[max_execution_time]: 300
 
-    # - role: role-nginx
-    #   nginx_enabled: yes
-    #   nginx_server_name: www.example.com
-    #   nginx_vhost_absent:
-    #     - default
-
+    - role: role-php-fpm
+      php_fpm_pool_name: www_ejemplo_es
+      # if user and group is not set, a user called php_fpm_pool_name will be created
+      php_fpm_pool_user: www-data
+      php_fpm_pool_group: www-data
+      php_fpm_pool_chdir: htdocs
+      # if user and group are set to 'www-data', always use 33!
+      php_fpm_pool_uid_gid: 33
+      php_fpm_pool_tmpdir_tmpfs_size: 128
+      php_fpm_pool_pm: static
+      php_fpm_pool_max_children: 2
+      php_fpm_pool_additional_variables:
+        php_value[hostname]: www.ejemplo.es
+        php_admin_value[memory_limit]: 128M
+        php_value[error_reporting]: 1
+        php_value[display_errors]: on
 
   tasks:
     - name: create a php.info file for the tests

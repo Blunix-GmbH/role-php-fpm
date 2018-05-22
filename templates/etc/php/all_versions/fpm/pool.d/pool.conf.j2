@@ -1,12 +1,12 @@
 [{{ php_fpm_pool_name }}]
 
 ; User / group and directory related settings
-user = {{ php_fpm_pool_name }}
-group = {{ php_fpm_pool_name }}
+user = {{ php_fpm_pool_user | default(php_fpm_pool_name) }}
+group = {{ php_fpm_pool_group | default(php_fpm_pool_name) }}
 chdir = {{ php_fpm_chdir | default('/var/www/' + php_fpm_pool_name + '/htdocs') }}
 listen = /var/run/php/{{ php_fpm_pool_name }}.sock
-listen.owner = {{ php_fpm_pool_name }}
-listen.group = {{ php_fpm_pool_name }}
+listen.owner = {{ php_fpm_pool_user | default(php_fpm_pool_name) }}
+listen.group = {{ php_fpm_pool_group | default(php_fpm_pool_name) }}
 env[TMP] = /var/www/tmp/{{ php_fpm_pool_name }}
 env[TMPDIR] = /var/www/tmp/{{ php_fpm_pool_name }}
 env[TEMP] = /var/www/tmp/{{ php_fpm_pool_name }}

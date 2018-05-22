@@ -23,7 +23,7 @@
 
 - name: create group for php-fpm pool
   group:
-    name: "{{ php_fpm_pool_name }}"
+    name: "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
     gid: "{{ php_fpm_pool_uid_gid }}"
     system: true
 
@@ -36,16 +36,16 @@
     home: /var/www
     groups:
       - www-data
-      - "{{ php_fpm_pool_name }}"
+      - "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
     append: yes
 
 - name: create user for php-fpm pool
   user:
-    name: "{{ php_fpm_pool_name }}"
+    name: "{{ php_fpm_pool_user | default(php_fpm_pool_name) }}"
     uid: "{{ php_fpm_pool_uid_gid }}"
-    group: "{{ php_fpm_pool_name }}"
+    group: "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
     groups:
-      - "{{ php_fpm_pool_name }}"
+      - "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
       - www-data
     append: no
     home: "/var/www/{{ php_fpm_pool_name }}"
@@ -54,8 +54,8 @@
   file:
     state: directory
     path: "/var/www/{{ php_fpm_pool_name }}/{{ php_fpm_pool_chdir }}"
-    owner: "{{ php_fpm_pool_name }}"
-    group: "{{ php_fpm_pool_name }}"
+    owner: "{{ php_fpm_pool_user | default(php_fpm_pool_name) }}"
+    group: "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
     mode: 0750
   when: php_fpm_pool_chdir is defined
 
@@ -71,8 +71,8 @@
   file:
     state: directory
     path: "/var/tmp/{{ php_fpm_pool_name }}"
-    owner: "{{ php_fpm_pool_name }}"
-    group: "{{ php_fpm_pool_name }}"
+    owner: "{{ php_fpm_pool_user | default(php_fpm_pool_name) }}"
+    group: "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
     mode: 0770
 
 - name: mount tmpfs to tmpdir for php-fpm pool
