@@ -83,7 +83,7 @@
     src: tmpfs
     path: "/var/tmp/{{ php_fpm_pool_name }}"
     state: mounted
-    opts: "defaults,noexec,nosuid,size={{ php_fpm_pool_tmpdir_tmpfs_size }},uid={{ php_fpm_pool_uid_gid }},gid={{ php_fpm_pool_uid_gid }}"
+    opts: "defaults,noexec,nosuid,size={{ php_fpm_pool_tmpdir_tmpfs_size }},uid={{ php_fpm_pool_uid_gid }},gid={{ php_fpm_pool_uid_gid }}"  # yamllint disable-line rule:line-length
   when: php_fpm_pool_tmpdir_tmpfs_size is defined
 
 - name: template custom php-fpm pool

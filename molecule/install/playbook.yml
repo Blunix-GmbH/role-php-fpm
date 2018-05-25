@@ -32,7 +32,8 @@
     - role: role-php-fpm
       # the name will be used to abstract the username, group name, logfile name (TODO should also be syslog prefix), tmpdir path
       php_fpm_pool_name: www_example_com
-      # the home dir for the user will be /var/www/{{ php_fpm_pool_name }}/ - append a custom path for a different chdir - default: omitted
+      # the home dir for the user will be /var/www/{{ php_fpm_pool_name }}/
+      # append a custom path for a different chdir - default: omitted
       php_fpm_pool_chdir: htdocs
       # User and group ID for new user - default 1000
       php_fpm_pool_uid_gid: 1050
