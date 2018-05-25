@@ -16,4 +16,8 @@ galaxy_info:
   - blunix
   - php-fpm
 
-dependencies: []
+dependencies:
+- src: git@github.com:blunix/role-php.git
+  name: blunix.role-php
+  version: 1.0.5
+  scm: git

@@ -1,70 +1,34 @@
-[{{ php_fpm_pool_item['name'] }}]
+[{{ php_fpm_pool_name }}]
 
-{% if 'prefix' in php_fpm_pool_item %}
-prefix = {{ php_fpm_pool_item['prefix'] }}
-{% endif %}
+; User / group and directory related settings
+user = {{ php_fpm_pool_user | default(php_fpm_pool_name) }}
+group = {{ php_fpm_pool_group | default(php_fpm_pool_name) }}
+chdir = {{ php_fpm_chdir | default('/var/www/' + php_fpm_pool_name + '/htdocs') }}
+listen = /var/run/php/{{ php_fpm_pool_name }}.sock
+listen.owner = {{ php_fpm_pool_user | default(php_fpm_pool_name) }}
+listen.group = {{ php_fpm_pool_group | default(php_fpm_pool_name) }}
+env[TMP] = /var/www/tmp/{{ php_fpm_pool_name }}
+env[TMPDIR] = /var/www/tmp/{{ php_fpm_pool_name }}
+env[TEMP] = /var/www/tmp/{{ php_fpm_pool_name }}
 
-user = www-data
-group = www-data
+; php-fpm worker mode settings
+pm = {{ php_fpm_pool_pm | default('static') }}
+pm.max_children = {{ php_fpm_pool_max_children | default("5") }}
+pm.start_servers = {{ php_fpm_pool_start_servers | default("2") }}
+pm.min_spare_servers = {{ php_fpm_pool_min_spare_servers | default("1") }}
+pm.max_spare_servers = {{ php_fpm_pool_max_spare_servers | default("3") }}
+pm.process_idle_timeout = {{ php_fpm_pool_process_idle_timeout | default("10s") }}
+pm.max_requests = {{ php_fpm_pool_max_requests | default("0") }}
 
-listen = {{ php_fpm_pool_item.listen | default("/run/php/php7.1-fpm.sock") }}
-;listen.backlog = 511
-
-listen.owner = www-data
-listen.group = www-data
-;listen.mode = 0660
-;listen.acl_users =
-;listen.acl_groups =
-
-{% if php_fpm_pool_item.allowed_clients is defined %}
-listen.allowed_clients = {% for php_fpm_pool_client_item in php_fpm_pool_item.allowed_clients %}{{ php_fpm_pool_client_item }} {% endfor %}
-{% endif %}
-
-; process.priority = -19
-
-pm = {{ php_fpm_pool_item.pm | default("dynamic") }}
-pm.max_children = {{ php_fpm_pool_item.max_children | default("5") }}
-pm.start_servers = {{ php_fpm_pool_item.start_servers | default("2") }}
-pm.min_spare_servers = {{ php_fpm_pool_item.min_spare_servers | default("1") }}
-pm.max_spare_servers = {{ php_fpm_pool_item.max_spare_servers | default("3") }}
-pm.process_idle_timeout = {{ php_fpm_pool_item.process_idle_timeout | default("10s") }}
-pm.max_requests = {{ php_fpm_pool_item.max_requests | default("0") }}
-{% if php_fpm_pool_item.status_page is defined %}
-pm.status_path = {{ php_fpm_pool_item.status_page }}
-{% endif %}
-
-{% if php_fpm_pool_item.ping_path is defined %}
-ping.path = {{ php_fpm_pool_item.ping_path }}
-{% endif %}
-{% if php_fpm_pool_item.status_path is defined %}
-pm.status_path = {{ php_fpm_pool_item.status_path }}
-{% endif %}
-ping.response = {{ php_fpm_pool_item.ping_response | default("pong") }}
-
-access.log = {{ php_fpm_pool_item.access_log | default("/var/log/php-fpm.log") }}
-;access.format = "%R - %u %t \"%m %r%Q%q\" %s %f %{mili}d %{kilo}M %C%%"
-;slowlog = log/$pool.log.slow
-;request_slowlog_timeout = {{ php_fpm_pool_item.request_slowlog_timeout | default("0") }}
-request_terminate_timeout = {{ php_fpm_pool_item.request_terminate_timeout | default("0") }}
-
-rlimit_files = {{ php_fpm_pool_item.rlimit_files | default("1024") }}
-rlimit_core = {{ php_fpm_pool_item.rlimit_cores | default("0") }}
-
-;chroot =
-chdir = {{ php_fpm_pool_item.chdir | default("/var/www") }}
-;catch_workers_output = yes
-;clear_env = no
-;security.limit_extensions = .php .php3 .php4 .php5 .php7
-
-;env[HOSTNAME] = $HOSTNAME
-;env[PATH] = /usr/local/bin:/usr/bin:/bin
-env[TMP] = {{ php_fpm_pool_item.tmpdir | default("/tmp") }}
-env[TMPDIR] = {{ php_fpm_pool_item.tmpdir | default("/tmp") }}
-env[TEMP] = {{ php_fpm_pool_item.tmpdir | default("/tmp") }}
-
-;php_admin_value[sendmail_path] = /usr/sbin/sendmail -t -i -f www@my.domain.com
-php_value[error_reporting] = 0
-php_value[display_errors] = off
-php_admin_value[error_log] = {{ php_fpm_pool_item.error_log | default("/var/log/php-fpm.log") }}
+; logging settings TODO can't find doc on how to send all of this to syslog
+catch_workers_output = yes
+access.log = /var/log/php/{{ php_version }}/{{ php_fpm_pool_name }}.access.log
 php_admin_flag[log_errors] = on
-php_admin_value[memory_limit] = {{ php_fpm_pool_item.memory_limit | default("32M") }}
+php_admin_value[error_log] = /var/log/php/{{ php_version }}/{{ php_fpm_pool_name }}.error.log
+slowlog = /var/log/php/{{ php_version }}/{{ php_fpm_pool_name }}.slow.log
+request_slowlog_timeout = 10
+
+; additional settings
+{% for key in php_fpm_pool_additional_variables | default({}) %}
+{{ key }} = {{ php_fpm_pool_additional_variables[key] }}
+{% endfor %}

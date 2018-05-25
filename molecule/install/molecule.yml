@@ -14,6 +14,8 @@ platforms:
     box: bento/ubuntu-16.04
 provisioner:
   name: ansible
+  connection_options:
+    ansible_become: yes
   lint:
     name: ansible-lint
 scenario:
