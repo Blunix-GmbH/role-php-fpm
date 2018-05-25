@@ -111,6 +111,18 @@
       loop_control:
         loop_var: php_info_project_name
 
+    - name: create a php.info file for the tests for www.ejemplo.es (www-data user and group)
+      copy:
+        content: |
+            <?php
+            phpinfo();
+            ?>
+        dest: "/var/www/www_ejemplo_es/htdocs/info.php"
+        owner: www-data
+        group: www-data
+        mode: 0640
+        force: yes
+
     - name: install libfcgi0ldbl for testing the socket
       apt:
         name: libfcgi0ldbl

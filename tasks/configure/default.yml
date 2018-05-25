@@ -26,6 +26,7 @@
     name: "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
     gid: "{{ php_fpm_pool_uid_gid }}"
     system: true
+  when: php_fpm_pool_group | default(php_fpm_pool_name) != 'www-data'
 
 - name: allow www-data user to read files with group permissions
   user:
@@ -49,6 +50,7 @@
       - www-data
     append: no
     home: "/var/www/{{ php_fpm_pool_name }}"
+  when: php_fpm_pool_user | default(php_fpm_pool_name) != 'www-data'
 
 - name: create chdir directory for php-fpm pool
   file:
