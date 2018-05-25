@@ -7,6 +7,7 @@ import testinfra.utils.ansible_runner
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
+
 def run_helper_script(host, domain):
     helper_script = """SCRIPT_FILENAME=/var/www/{}/htdocs/info.php \
     REQUEST_METHOD=GET \
@@ -15,14 +16,14 @@ def run_helper_script(host, domain):
     stdout = host.run(helper_script).stdout
     return stdout
 
-@pytest.mark.parametrize("domain,variable,value", [
-    ["www_example_com", "memory_limit" , "256M"],
-    ["www_beispiel_de", "memory_limit" , "128M"],
-    ["www_beispiel_de", "upload_max_filesize" , "128M"],
-    ["www_beispiel_de", "date.timezone" , "Europe/Berlin"],
-    ["www_ejemplo_es", "date.timezone" , "Europe/Berlin"]
-])
 
+@pytest.mark.parametrize("domain,variable,value", [
+    ["www_example_com", "memory_limit", "256M"],
+    ["www_beispiel_de", "memory_limit", "128M"],
+    ["www_beispiel_de", "upload_max_filesize", "128M"],
+    ["www_beispiel_de", "date.timezone", "Europe/Berlin"],
+    ["www_ejemplo_es", "date.timezone", "Europe/Berlin"],
+])
 def test_php_info_variable(host, domain, variable, value):
     stdout = run_helper_script(host, domain)
     found_variable = False
@@ -35,5 +36,5 @@ def test_php_info_variable(host, domain, variable, value):
                 found_value = True
             break
 
-    assert found_variable == True
-    assert found_value == True
+    assert found_variable
+    assert found_value

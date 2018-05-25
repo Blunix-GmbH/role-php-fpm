@@ -7,6 +7,7 @@ import testinfra.utils.ansible_runner
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
+
 # "domain" is used as string with grep...
 # By putting the brackets around the letter it searches for the regex - find "www" followed by "_example_com"
 # this excludes the grep process from the process list output
@@ -14,8 +15,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     ["www_example_com", 3],
     ["www_beispiel_de", 2]
 ])
-
-# pythons psutil does not return the full process name (only "php-fpm7.1", not "php-fpm: pool www_beispiel_de") hence I use "ps aux"
+# pythons psutil does not return the full process name (only "php-fpm7.1", not "php-fpm: pool www_beispiel_de") hence I use "ps aux"  # noqa: E501
 def test_php_info_variable(host, domain, worker_count):
     full_process_list = host.run('ps aux').stdout
     fpm_process_list = []
