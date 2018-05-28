@@ -60,6 +60,8 @@
     group: "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
     mode: 0750
   when: php_fpm_pool_chdir is defined
+  # sometimes this is a symlink created by the deployment - in this case just skip it
+  ignore_errors: true
 
 - name: create main tmpdir for all php-fpm pools of this php_version
   file:

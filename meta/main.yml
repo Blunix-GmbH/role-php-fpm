@@ -19,5 +19,5 @@ galaxy_info:
 dependencies:
 - src: git@github.com:blunix/role-php.git
   name: blunix.role-php
-  version: 1.0.5
+  version: 1.0.6
   scm: git
