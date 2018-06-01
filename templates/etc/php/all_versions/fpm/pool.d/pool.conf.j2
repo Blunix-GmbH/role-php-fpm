@@ -3,7 +3,11 @@
 ; User / group and directory related settings
 user = {{ php_fpm_pool_user | default(php_fpm_pool_name) }}
 group = {{ php_fpm_pool_group | default(php_fpm_pool_name) }}
-chdir = {{ '/var/www/' + php_fpm_pool_name + '/' + php_fpm_pool_chdir | default('') ) }}
+{% if php_fpm_pool_chdir is defined %}
+chdir = {{ '/var/www/' + php_fpm_pool_name + '/' + php_fpm_pool_chdir }}
+{% else %}
+chdir = {{ '/var/www/' + php_fpm_pool_name }}
+{% endif %}
 listen = /var/run/php/{{ php_fpm_pool_name }}.sock
 listen.owner = {{ php_fpm_pool_user | default(php_fpm_pool_name) }}
 listen.group = {{ php_fpm_pool_group | default(php_fpm_pool_name) }}
