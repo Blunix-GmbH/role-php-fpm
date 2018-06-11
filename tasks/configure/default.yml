@@ -54,6 +54,11 @@
     home: "{{ php_fpm_www_dir }}/{{ php_fpm_pool_name }}"
   when: php_fpm_pool_user | default(php_fpm_pool_name) != 'www-data'
 
+- name: check if chdir is a symlink - in which case no need to create it
+  stat:
+    path: "{{ php_fpm_www_dir }}/{{ php_fpm_pool_name }}/{{ php_fpm_pool_chdir }}"
+  register: stat_php_fpm_chdir_symlink
+
 - name: create chdir directory for php-fpm pool
   file:
     state: directory
@@ -61,9 +66,7 @@
     owner: "{{ php_fpm_pool_user | default(php_fpm_pool_name) }}"
     group: "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
     mode: 0750
-  when: php_fpm_pool_chdir is defined
-  # sometimes this is a symlink created by the deployment - in this case just skip it
-  ignore_errors: true
+  when: php_fpm_pool_chdir is defined and stat_php_fpm_chdir_symlink.stat.islnk is defined
 
 - name: create main tmpdir for all php-fpm pools of this php_version
   file:
