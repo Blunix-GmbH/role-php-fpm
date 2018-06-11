@@ -34,6 +34,8 @@
     system: true
     uid: 33
     shell: /usr/sbin/nologin
+    # /var/www is the package maintainers default home for the www-data user,
+    # hence this is not set to php_fpm_www_dir
     home: /var/www
     groups:
       - www-data
@@ -49,13 +51,13 @@
       - "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
       - www-data
     append: no
-    home: "/var/www/{{ php_fpm_pool_name }}"
+    home: "{{ php_fpm_www_dir }}/{{ php_fpm_pool_name }}"
   when: php_fpm_pool_user | default(php_fpm_pool_name) != 'www-data'
 
 - name: create chdir directory for php-fpm pool
   file:
     state: directory
-    path: "/var/www/{{ php_fpm_pool_name }}/{{ php_fpm_pool_chdir }}"
+    path: "{{ php_fpm_www_dir }}/{{ php_fpm_pool_name }}/{{ php_fpm_pool_chdir }}"
     owner: "{{ php_fpm_pool_user | default(php_fpm_pool_name) }}"
     group: "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
     mode: 0750

@@ -8,24 +8,24 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
 
-def run_helper_script(host, domain):
-    helper_script = """SCRIPT_FILENAME=/var/www/{}/htdocs/info.php \
+def run_helper_script(path, domain):
+    helper_script = """SCRIPT_FILENAME={} \
     REQUEST_METHOD=GET \
     cgi-fcgi -bind -connect /var/run/php/{}.sock
-    """.format(domain, domain)
+    """.format(path, domain)
     stdout = host.run(helper_script).stdout
     return stdout
 
 
-@pytest.mark.parametrize("domain,variable,value", [
-    ["www_example_com", "memory_limit", "256M"],
-    ["www_beispiel_de", "memory_limit", "128M"],
-    ["www_beispiel_de", "upload_max_filesize", "128M"],
-    ["www_beispiel_de", "date.timezone", "Europe/Berlin"],
-    ["www_ejemplo_es", "date.timezone", "Europe/Berlin"],
+@pytest.mark.parametrize("domain,variable,value,path", [
+    ["www_example_com", "memory_limit", "256M", "/var/www/www_example_com/htdocs/info.php"],
+    ["www_beispiel_de", "memory_limit", "128M", "/var/www/www_example_com/htdocs/info.php"],
+    ["www_beispiel_de", "upload_max_filesize", "128M", "/var/www/www_beispiel_de/htdocs/info.php"],
+    ["www_beispiel_de", "date.timezone", "Europe/Berlin", "/var/www/www_beispiel_de/htdocs/info.php"],
+    ["www_ejemplo_es", "date.timezone", "Europe/Berlin", "/srv/www/www_ejemplo_es/app/htdocs/info.php"],
 ])
-def test_php_info_variable(host, domain, variable, value):
-    stdout = run_helper_script(host, domain)
+def test_php_info_variable(host, domain, variable, value, path):
+    stdout = run_helper_script(path, domain)
     found_variable = False
     found_value = False
     for line in stdout.split('\r\n'):

@@ -4,16 +4,16 @@
 user = {{ php_fpm_pool_user | default(php_fpm_pool_name) }}
 group = {{ php_fpm_pool_group | default(php_fpm_pool_name) }}
 {% if php_fpm_pool_chdir is defined %}
-chdir = {{ '/var/www/' + php_fpm_pool_name + '/' + php_fpm_pool_chdir }}
+chdir = {{ php_fpm_www_dir + '/' + php_fpm_pool_name + '/' + php_fpm_pool_chdir }}
 {% else %}
-chdir = {{ '/var/www/' + php_fpm_pool_name }}
+chdir = {{ php_fpm_www_dir + '/' + php_fpm_pool_name }}
 {% endif %}
 listen = /var/run/php/{{ php_fpm_pool_name }}.sock
 listen.owner = {{ php_fpm_pool_user | default(php_fpm_pool_name) }}
 listen.group = {{ php_fpm_pool_group | default(php_fpm_pool_name) }}
-env[TMP] = /var/www/tmp/{{ php_fpm_pool_name }}
-env[TMPDIR] = /var/www/tmp/{{ php_fpm_pool_name }}
-env[TEMP] = /var/www/tmp/{{ php_fpm_pool_name }}
+env[TMP] = {{ php_fpm_www_dir }}/tmp/{{ php_fpm_pool_name }}
+env[TMPDIR] = {{ php_fpm_www_dir }}/tmp/{{ php_fpm_pool_name }}
+env[TEMP] = {{ php_fpm_www_dir }}/tmp/{{ php_fpm_pool_name }}
 
 ; php-fpm worker mode settings
 pm = {{ php_fpm_pool_pm | default('static') }}
