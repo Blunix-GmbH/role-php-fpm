@@ -13,7 +13,8 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 # this excludes the grep process from the process list output
 @pytest.mark.parametrize("domain,worker_count", [
     ["www_example_com", 3],
-    ["www_beispiel_de", 2]
+    ["www_beispiel_de", 2],
+    ["www_ejemplo_es", 2]
 ])
 # pythons psutil does not return the full process name (only "php-fpm7.1", not "php-fpm: pool www_beispiel_de") hence I use "ps aux"  # noqa: E501
 def test_php_info_variable(host, domain, worker_count):

@@ -66,7 +66,7 @@
     owner: "{{ php_fpm_pool_user | default(php_fpm_pool_name) }}"
     group: "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
     mode: 0750
-  when: php_fpm_pool_chdir is defined and stat_php_fpm_chdir_symlink.stat.islnk is defined
+  when: php_fpm_pool_chdir is defined and stat_php_fpm_chdir_symlink.stat.islnk is not defined
 
 - name: create main tmpdir for all php-fpm pools of this php_version
   file:
