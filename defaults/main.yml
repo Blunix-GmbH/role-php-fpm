@@ -4,3 +4,4 @@ php_packages: "{{ set(php_packages + ['php' + php_version + '-fpm']) }}"
 
 php_fpm_enabled: no
 php_fpm_pool_uid_gid: 1000
+php_fpm_www_dir: /var/www

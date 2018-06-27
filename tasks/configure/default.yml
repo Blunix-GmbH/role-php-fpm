@@ -34,6 +34,8 @@
     system: true
     uid: 33
     shell: /usr/sbin/nologin
+    # /var/www is the package maintainers default home for the www-data user,
+    # hence this is not set to php_fpm_www_dir
     home: /var/www
     groups:
       - www-data
@@ -49,19 +51,22 @@
       - "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
       - www-data
     append: no
-    home: "/var/www/{{ php_fpm_pool_name }}"
+    home: "{{ php_fpm_www_dir }}/{{ php_fpm_pool_name }}"
   when: php_fpm_pool_user | default(php_fpm_pool_name) != 'www-data'
+
+- name: check if chdir is a symlink - in which case no need to create it
+  stat:
+    path: "{{ php_fpm_www_dir }}/{{ php_fpm_pool_name }}/{{ php_fpm_pool_chdir }}"
+  register: stat_php_fpm_chdir_symlink
 
 - name: create chdir directory for php-fpm pool
   file:
     state: directory
-    path: "/var/www/{{ php_fpm_pool_name }}/{{ php_fpm_pool_chdir }}"
+    path: "{{ php_fpm_www_dir }}/{{ php_fpm_pool_name }}/{{ php_fpm_pool_chdir }}"
     owner: "{{ php_fpm_pool_user | default(php_fpm_pool_name) }}"
     group: "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
     mode: 0750
-  when: php_fpm_pool_chdir is defined
-  # sometimes this is a symlink created by the deployment - in this case just skip it
-  ignore_errors: true
+  when: php_fpm_pool_chdir is defined and stat_php_fpm_chdir_symlink.stat.islnk is not defined
 
 - name: create main tmpdir for all php-fpm pools of this php_version
   file:
@@ -85,7 +90,7 @@
     src: tmpfs
     path: "/var/tmp/{{ php_fpm_pool_name }}"
     state: mounted
-    opts: "defaults,noexec,nosuid,size={{ php_fpm_pool_tmpdir_tmpfs_size }},uid={{ php_fpm_pool_uid_gid }},gid={{ php_fpm_pool_uid_gid }}"  # yamllint disable-line rule:line-length
+    opts: "defaults,noexec,nosuid,size={{ php_fpm_pool_tmpdir_tmpfs_size }},uid={{ php_fpm_pool_uid_gid }},gid={{ php_fpm_pool_uid_gid }},mode=0770"  # yamllint disable-line rule:line-length
   when: php_fpm_pool_tmpdir_tmpfs_size is defined
 
 - name: template custom php-fpm pool
