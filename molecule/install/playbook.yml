@@ -42,6 +42,9 @@
       php_fpm_pool_uid_gid: 1050
       # size of the tmpfs for the tmpdir (in MB) - if omitted, no tmpfs is mounted
       php_fpm_pool_tmpdir_tmpfs_size: 128
+      # Where to place the tmpdir for this particular pool. The the parent directory of this directory
+      # is managed by ansbile and set to www-data:www-data 0550 so that nginx works correctly with multiple Linux users
+      php_fpm_pool_tmpdir: "/var/www/tmp/{{ php_fpm_pool_name }}"
       # php-fpm worker mode settings - I recommend setting php_fpm_pm to static
       # if you host LOTS of wordpresses you can use dynamic. start_servers, min and max_spare_servers are ignored by
       # php-fpm if you set to static, with static only max_children is relevant.

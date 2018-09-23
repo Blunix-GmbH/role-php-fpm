@@ -71,7 +71,7 @@
 - name: create main tmpdir for all php-fpm pools of this php_version
   file:
     state: directory
-    path: /var/tmp
+    path: "{{ php_fpm_pool_tmpdir | dirname }}"
     owner: www-data
     group: www-data
     mode: 0550
@@ -79,7 +79,7 @@
 - name: create tmpdir for php-fpm pool
   file:
     state: directory
-    path: "/var/tmp/{{ php_fpm_pool_name }}"
+    path: "{{ php_fpm_pool_tmpdir }}"
     owner: "{{ php_fpm_pool_user | default(php_fpm_pool_name) }}"
     group: "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
     mode: 0770
@@ -88,7 +88,7 @@
   mount:
     fstype: tmpfs
     src: tmpfs
-    path: "/var/tmp/{{ php_fpm_pool_name }}"
+    path: "{{ php_fpm_pool_tmpdir }}"
     state: mounted
     opts: "defaults,noexec,nosuid,size={{ php_fpm_pool_tmpdir_tmpfs_size }},uid={{ php_fpm_pool_uid_gid }},gid={{ php_fpm_pool_uid_gid }},mode=0770"  # yamllint disable-line rule:line-length
   when: php_fpm_pool_tmpdir_tmpfs_size is defined
