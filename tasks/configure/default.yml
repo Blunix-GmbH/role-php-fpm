@@ -21,12 +21,14 @@
     group: root
     mode: 0775
 
+
 - name: create group for php-fpm pool
   group:
-    name: "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
+    name: "{{ php_fpm_pool_group }}"
     gid: "{{ php_fpm_pool_uid_gid }}"
     system: true
-  when: php_fpm_pool_group | default(php_fpm_pool_name) != 'www-data'
+    state: present
+  when: php_fpm_pool_group != 'www-data' and php_fpm_pool_state != 'absent'
 
 - name: allow www-data user to read files with group permissions
   user:
@@ -39,22 +41,26 @@
     home: /var/www
     groups:
       - www-data
-      - "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
+      - "{{ php_fpm_pool_group }}"
     append: yes
+  when: php_fpm_pool_state != 'absent'
 
-- name: create user for php-fpm pool
+# TODO do I need to remove the group here or will removing the group do that?
+
+- name: manage user for php-fpm pool
   user:
-    name: "{{ php_fpm_pool_user | default(php_fpm_pool_name) }}"
+    name: "{{ php_fpm_pool_user }}"
     uid: "{{ php_fpm_pool_uid_gid }}"
-    group: "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
+    group: "{{ php_fpm_pool_group }}"
     groups:
-      - "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
+      - "{{ php_fpm_pool_group }}"
       - www-data
     append: no
     home: "{{ php_fpm_www_dir }}/{{ php_fpm_pool_name }}"
-  when: php_fpm_pool_user | default(php_fpm_pool_name) != 'www-data'
+    state: "{{ php_fpm_pool_state }}"
+  when: php_fpm_pool_user != 'www-data'
 
-- name: check if chdir is a symlink - in which case no need to create it
+- name: check if chdir is a symlink - if so there is no need to create it
   stat:
     path: "{{ php_fpm_www_dir }}/{{ php_fpm_pool_name }}/{{ php_fpm_pool_chdir }}"
   register: stat_php_fpm_chdir_symlink
@@ -63,15 +69,15 @@
   file:
     state: directory
     path: "{{ php_fpm_www_dir }}/{{ php_fpm_pool_name }}/{{ php_fpm_pool_chdir }}"
-    owner: "{{ php_fpm_pool_user | default(php_fpm_pool_name) }}"
-    group: "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
+    owner: "{{ php_fpm_pool_user }}"
+    group: "{{ php_fpm_pool_group }}"
     mode: 0750
-  when: php_fpm_pool_chdir is defined and stat_php_fpm_chdir_symlink.stat.islnk is not defined
+  when: php_fpm_pool_chdir is defined and stat_php_fpm_chdir_symlink.stat.islnk is not defined and php_fpm_pool_state != 'absent'
 
 - name: create main tmpdir for all php-fpm pools of this php_version
   file:
     state: directory
-    path: /var/tmp
+    path: "{{ php_fpm_pool_tmpdir | dirname }}"
     owner: www-data
     group: www-data
     mode: 0550
@@ -79,19 +85,20 @@
 - name: create tmpdir for php-fpm pool
   file:
     state: directory
-    path: "/var/tmp/{{ php_fpm_pool_name }}"
-    owner: "{{ php_fpm_pool_user | default(php_fpm_pool_name) }}"
-    group: "{{ php_fpm_pool_group | default(php_fpm_pool_name) }}"
+    path: "{{ php_fpm_pool_tmpdir }}"
+    owner: "{{ php_fpm_pool_user }}"
+    group: "{{ php_fpm_pool_group }}"
     mode: 0770
+  when: php_fpm_pool_state != 'absent'
 
 - name: mount tmpfs to tmpdir for php-fpm pool
   mount:
     fstype: tmpfs
     src: tmpfs
-    path: "/var/tmp/{{ php_fpm_pool_name }}"
+    path: "{{ php_fpm_pool_tmpdir }}"
     state: mounted
     opts: "defaults,noexec,nosuid,size={{ php_fpm_pool_tmpdir_tmpfs_size }},uid={{ php_fpm_pool_uid_gid }},gid={{ php_fpm_pool_uid_gid }},mode=0770"  # yamllint disable-line rule:line-length
-  when: php_fpm_pool_tmpdir_tmpfs_size is defined
+  when: php_fpm_pool_tmpdir_tmpfs_size is defined and php_fpm_pool_state != 'absent'
 
 - name: template custom php-fpm pool
   template:
@@ -101,6 +108,33 @@
     owner: root
     group: root
   notify: restart php-fpm
+  when: php_fpm_pool_state != 'absent'
+
+- name: remove group for php-fpm pool if state is absent
+  group:
+    name: "{{ php_fpm_pool_group }}"
+    gid: "{{ php_fpm_pool_uid_gid }}"
+    state: absent
+  when: php_fpm_pool_group != 'www-data' and php_fpm_pool_state == 'absent'
+
+- name: umount tmpfs to tmpdir for php-fpm pool if state is absent
+  mount:
+    path: "{{ php_fpm_pool_tmpdir }}"
+    state: absent
+  when: php_fpm_pool_state == 'absent'
+
+- name: remove this pools files if state is absent
+  file:
+    state: absent
+    path: "{{ php_fpm_absent_file }}"
+  when: php_fpm_pool_state == 'absent'
+  with_items:
+    - "{{ php_fpm_www_dir }}/{{ php_fpm_pool_name }}"
+    - "/etc/php/{{ php_version }}/fpm/pool.d/{{ php_fpm_pool_name }}.conf"
+    - "{{ php_fpm_pool_tmpdir }}"
+  loop_control:
+    loop_var: php_fpm_absent_file
+  notify: restart php-fpm
 
 - name: template custom php.ini files for php-fpm
   template:
@@ -109,8 +143,19 @@
     owner: root
     group: root
     mode: 0644
+  when: php_fpm_custom_ini['state'] is not defined or php_fpm_custom_ini['state'] != 'absent'
   vars:
     php_fpm_custom_ini_vars: "{{ php_fpm_custom_ini['vars'] }}"
+  with_items: "{{ php_fpm_custom_inis }}"
+  loop_control:
+    loop_var: php_fpm_custom_ini
+  notify: restart php-fpm
+
+- name: remove custom php.ini files with state absent
+  file:
+    path: /etc/php/{{ php_version }}/{{ php_fpm_custom_ini['path'] }}"
+    state: absent
+  when: php_fpm_custom_ini['state'] is defined and php_fpm_custom_ini['state'] == 'absent'
   with_items: "{{ php_fpm_custom_inis }}"
   loop_control:
     loop_var: php_fpm_custom_ini

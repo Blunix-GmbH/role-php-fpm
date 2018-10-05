@@ -1,0 +1,122 @@
+---
+- name: Converge
+  hosts: all
+  become: yes
+  vars:
+    # Vars related to role-php (not role-php-fpm)
+    php_enabled: yes
+    php_version: 7.1
+    php_packages:
+      - php{{ php_version }}-fpm
+
+    # Setup custom php.ini style config files
+    php_fpm_custom_inis:
+      - path: fpm/conf.d/99-custom.ini
+        state: present
+        vars:
+          MySQL:
+            mysql.allow_local_infile: On
+            mysql.connect_timeout: 240
+          Date:
+            date.timezone: Europe/Berlin
+          PHP:
+            default_socket_timeout: 240
+            expose_php: Off
+            upload_max_filesize: 128M
+            max_input_time: 240
+            max_execution_time: 240
+            max_file_uploads: 20
+            max_input_vars: 1000
+            post_max_size: 128M
+
+      - path: fpm/conf.d/98-custom.ini
+        state: absent
+
+  roles:
+      # Create and remove a pool
+    - role: role-php-fpm
+      php_fpm_pool_state: present
+      php_fpm_pool_name: www_voorbeeld_nl
+      php_fpm_pool_chdir: htdocs
+      php_fpm_pool_uid_gid: 1053
+      php_fpm_pool_tmpdir_tmpfs_size: 128
+      php_fpm_pool_pm: static
+      php_fpm_pool_max_children: 2
+      php_fpm_pool_additional_variables:
+        php_value[hostname]: www.voorbeeld.nl
+        php_admin_value[memory_limit]: 128M
+        php_value[error_reporting]: 1
+        php_value[display_errors]: on
+        php_admin_value[use_only_cookies]: 1
+        php_admin_value[use_trans_sid]: 0
+        php_admin_value[cookie_lifetime]: 36000
+        php_admin_value[gc_maxlifetime]: 43200
+        php_admin_value[upload_max_filesize]: 50M
+        php_admin_value[post_max_size]: 50M
+        php_admin_value[max_input_time]: 300
+        php_admin_value[max_execution_time]: 300
+    - role: role-php-fpm
+      php_fpm_pool_state: absent
+      php_fpm_pool_name: www_voorbeeld_nl
+      php_fpm_pool_chdir: htdocs
+      php_fpm_pool_uid_gid: 1053
+      php_fpm_pool_tmpdir_tmpfs_size: 128
+      php_fpm_pool_pm: static
+      php_fpm_pool_max_children: 2
+      php_fpm_pool_additional_variables:
+        php_value[hostname]: www.voorbeeld.nl
+        php_admin_value[memory_limit]: 128M
+        php_value[error_reporting]: 1
+        php_value[display_errors]: on
+        php_admin_value[use_only_cookies]: 1
+        php_admin_value[use_trans_sid]: 0
+        php_admin_value[cookie_lifetime]: 36000
+        php_admin_value[gc_maxlifetime]: 43200
+        php_admin_value[upload_max_filesize]: 50M
+        php_admin_value[post_max_size]: 50M
+        php_admin_value[max_input_time]: 300
+        php_admin_value[max_execution_time]: 300
+
+    # Make sure a pool that never existed also works with state: absent
+    - role: role-php-fpm
+      php_fpm_pool_state: absent
+      php_fpm_pool_name: www_primjer_bh
+      php_fpm_pool_chdir: htdocs
+      php_fpm_pool_uid_gid: 1054
+      php_fpm_pool_tmpdir_tmpfs_size: 128
+      php_fpm_pool_pm: static
+      php_fpm_pool_max_children: 2
+      php_fpm_pool_additional_variables:
+        php_value[hostname]: www.primjer.bh
+        php_admin_value[memory_limit]: 128M
+        php_value[error_reporting]: 1
+        php_value[display_errors]: on
+        php_admin_value[use_only_cookies]: 1
+        php_admin_value[use_trans_sid]: 0
+        php_admin_value[cookie_lifetime]: 36000
+        php_admin_value[gc_maxlifetime]: 43200
+        php_admin_value[upload_max_filesize]: 50M
+        php_admin_value[post_max_size]: 50M
+        php_admin_value[max_input_time]: 300
+        php_admin_value[max_execution_time]: 300
+
+    # Create a pool so the php-fpm service will not fail to start for this molecule scenario
+    - role: role-php-fpm
+      php_fpm_pool_name: www_example_com
+      php_fpm_www_dir: /var/www
+      php_fpm_pool_chdir: htdocs
+      php_fpm_pool_uid_gid: 1050
+      php_fpm_pool_tmpdir_tmpfs_size: 128
+      php_fpm_pool_tmpdir: "/var/www/tmp/{{ php_fpm_pool_name }}"
+      php_fpm_pool_pm: dynamic
+      php_fpm_pool_max_children: 8
+      php_fpm_pool_start_servers: 3
+      php_fpm_pool_min_spare_servers: 1
+      php_fpm_pool_max_spare_servers: 4
+      php_fpm_pool_additional_variables:
+        php_value[hostname]: www.example.com
+        ping.path: /ping
+        ping.response: pong
+        php_admin_value[memory_limit]: 256M
+        php_value[error_reporting]: 1
+        php_value[display_errors]: on

@@ -6,26 +6,7 @@ Installation and configuration of PHP is delegated to a separate role, i.e. `blu
 
 # Example Playbook
 
-```yaml
-- hosts: all
-  vars:
-    php_fpm_enabled: yes
-  roles:
-    - blunix.role-php-fpm
-```
-
-Using it with `blunix.role-php`:
-```yaml
-- hosts: all
-  vars:
-    php_enabled: yes
-    php_version: 7.1
-    php_fpm_enabled: yes
-    php_fpm_version: '{{ php_version }}'
-  roles:
-    - blunix.role-php
-    - blunix.role-php-fpm
-```
+Please refer to `molecule/install/playbook/yml` for a comprehensive example.
 
 # License
 

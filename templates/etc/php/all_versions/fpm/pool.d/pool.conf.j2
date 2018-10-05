@@ -11,9 +11,9 @@ chdir = {{ php_fpm_www_dir + '/' + php_fpm_pool_name }}
 listen = /var/run/php/{{ php_fpm_pool_name }}.sock
 listen.owner = {{ php_fpm_pool_user | default(php_fpm_pool_name) }}
 listen.group = {{ php_fpm_pool_group | default(php_fpm_pool_name) }}
-env[TMP] = {{ php_fpm_www_dir }}/tmp/{{ php_fpm_pool_name }}
-env[TMPDIR] = {{ php_fpm_www_dir }}/tmp/{{ php_fpm_pool_name }}
-env[TEMP] = {{ php_fpm_www_dir }}/tmp/{{ php_fpm_pool_name }}
+env[TMP] = {{ php_fpm_pool_tmpdir }}
+env[TMPDIR] = {{ php_fpm_pool_tmpdir }}
+env[TEMP] = {{ php_fpm_pool_tmpdir }}
 
 ; php-fpm worker mode settings
 pm = {{ php_fpm_pool_pm | default('static') }}
