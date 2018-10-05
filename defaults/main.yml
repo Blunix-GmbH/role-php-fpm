@@ -7,3 +7,5 @@ php_packages: "{{ set(php_packages + ['php' + php_version + '-fpm']) }}"
 php_fpm_pool_tmpdir: "/var/www/tmp/{{ php_fpm_pool_name }}"
 php_fpm_pool_uid_gid: 1000
 php_fpm_www_dir: /var/www
+php_fpm_pool_user: "{{ php_fpm_pool_name }}"
+php_fpm_pool_group: "{{ php_fpm_pool_group }}"
