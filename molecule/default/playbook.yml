@@ -31,6 +31,7 @@
   roles:
     - role: role-php-fpm
       # the name will be used to abstract the username, group name, logfile name (TODO should also be syslog prefix), tmpdir path
+      # Make sure it only contains underscores, no dots! Dashes are allowed.
       php_fpm_pool_name: www_example_com
       # The php-fpm www dir, such as /var/www, below which the php_fpm_pool_dir will be created as the users home directory
       # default: /var/www
@@ -102,6 +103,27 @@
         php_value[error_reporting]: 1
         php_value[display_errors]: on
 
+    - role: role-php-fpm
+      php_fpm_pool_name: www_esempio_it
+      php_fpm_pool_chdir: htdocs
+      php_fpm_pool_uid_gid: 1052
+      php_fpm_pool_tmpdir_tmpfs_size: 128
+      php_fpm_pool_pm: static
+      php_fpm_pool_max_children: 2
+      php_fpm_pool_additional_variables:
+        php_value[hostname]: www.esempio.it
+        php_admin_value[memory_limit]: 128M
+        php_value[error_reporting]: 1
+        php_value[display_errors]: on
+        php_admin_value[use_only_cookies]: 1
+        php_admin_value[use_trans_sid]: 0
+        php_admin_value[cookie_lifetime]: 36000
+        php_admin_value[gc_maxlifetime]: 43200
+        php_admin_value[upload_max_filesize]: 50M
+        php_admin_value[post_max_size]: 50M
+        php_admin_value[max_input_time]: 300
+        php_admin_value[max_execution_time]: 300
+
   tasks:
     - name: create a php.info file for the tests
       copy:
@@ -117,6 +139,7 @@
       with_items:
         - www_example_com
         - www_beispiel_de
+        - www_esempio_it
       loop_control:
         loop_var: php_info_project_name
 

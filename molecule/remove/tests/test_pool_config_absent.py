@@ -6,20 +6,18 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
 PHP_FPM_VERSION = '7.1'
-PHP_FPM_POOLS_PRESENT = [
-    'www_example_com',
-    'www_beispiel_de',
-    'www_ejemplo_es',
-    'www_esempio_it',
+PHP_FPM_POOLS_ABSENT = [
+    'www_voorbeeld_nl',
+    'www_primjer_bh',
 ]
 
 
-def test_pool_config_exists(host):
-    for PHP_FPM_POOL_PRESENT in PHP_FPM_POOLS_PRESENT:
+def test_pool_config_absent(host):
+    for PHP_FPM_POOL_ABSENT in PHP_FPM_POOLS_ABSENT:
         config = host.file(
             "/etc/php/{}/fpm/pool.d/{}.conf".format(
                 PHP_FPM_VERSION,
-                PHP_FPM_POOL_PRESENT
+                PHP_FPM_POOL_ABSENT
             )
         )
-        assert config.exists
+        assert not config.exists

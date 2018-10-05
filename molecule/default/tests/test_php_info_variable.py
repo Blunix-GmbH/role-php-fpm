@@ -23,6 +23,7 @@ def run_helper_script(host, path, domain):
     ["www_beispiel_de", "upload_max_filesize", "128M", "/var/www/www_beispiel_de/htdocs/info.php"],
     ["www_beispiel_de", "date.timezone", "Europe/Berlin", "/var/www/www_beispiel_de/htdocs/info.php"],
     ["www_ejemplo_es", "date.timezone", "Europe/Berlin", "/srv/www/www_ejemplo_es/app/htdocs/info.php"],
+    ["www_esempio_it", "date.timezone", "Europe/Berlin", "/var/www/www_esempio_it/htdocs/info.php"],
 ])
 def test_php_info_variable(host, domain, variable, value, path):
     stdout = run_helper_script(host, path, domain)
