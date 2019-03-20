@@ -14,7 +14,7 @@
 ; Pid file
 ; Note: the default prefix is /var
 ; Default Value: none
-pid = /run/php/php{{ php_version }}-fpm.pid
+pid = /run/php/php{{ php_fpm_version }}-fpm.pid
 
 ; Error log file
 ; If it's set to "syslog", log is sent to syslogd instead of being written
@@ -122,4 +122,4 @@ systemd_interval = {{ php_fpm_systemd_interval | default("10s;") }}
 ; Relative path can also be used. They will be prefixed by:
 ;  - the global prefix if its been set (-p argument)
 ;  - /usr otherwise
-include=/etc/php/{{ php_version }}/fpm/pool.d/*.conf
+include=/etc/php/{{ php_fpm_version }}/fpm/pool.d/*.conf

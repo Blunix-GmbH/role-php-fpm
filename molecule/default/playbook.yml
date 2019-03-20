@@ -1,14 +1,9 @@
 ---
 - name: Converge
   hosts: all
-  become: yes
+  become: True
   vars:
-    # Vars related to role-php (not role-php-fpm)
-    php_enabled: yes
-    php_version: 7.1
-    php_packages:
-      - php{{ php_version }}-fpm
-
+    php_fpm_version: 7.1
     # Setup custom php.ini style config files
     php_fpm_custom_inis:
       - path: fpm/conf.d/99-custom.ini
@@ -131,17 +126,17 @@
             <?php
             phpinfo();
             ?>
-        dest: "/var/www/{{ php_info_project_name }}/htdocs/info.php"
-        owner: "{{ php_info_project_name }}"
-        group: "{{ php_info_project_name }}"
+        dest: "/var/www/{{ php_fpm_info_project_name }}/htdocs/info.php"
+        owner: "{{ php_fpm_info_project_name }}"
+        group: "{{ php_fpm_info_project_name }}"
         mode: 0640
-        force: yes
+        force: True
       with_items:
         - www_example_com
         - www_beispiel_de
         - www_esempio_it
       loop_control:
-        loop_var: php_info_project_name
+        loop_var: php_fpm_info_project_name
 
     - name: create a php.info file for the tests for www.ejemplo.es (www-data user and group)
       copy:
@@ -153,7 +148,7 @@
         owner: www-data
         group: www-data
         mode: 0640
-        force: yes
+        force: True
 
     - name: install libfcgi0ldbl for testing the socket
       apt:

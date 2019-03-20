@@ -1,0 +1,43 @@
+- name: install dependencies
+  apt:
+    pkg: apt-transport-https
+    state: present
+
+- name: import APT key
+  get_url:
+    url: https://packages.sury.org/php/apt.gpg
+    dest: /etc/apt/trusted.gpg.d/php.gpg
+
+- name: add APT repository
+  apt_repository:
+    repo: "deb https://packages.sury.org/php/ {{ ansible_lsb.codename }} main"
+    filename: /etc/apt/sources.list.d/php
+    update_cache: True
+
+- name: install PHP-FPM
+  apt:
+    pkg: "php{{ php_fpm_version }}-fpm"
+    state: present
+
+- name: uninstall PHP packages listed in php_fpm_packages_absent
+  apt:
+    pkg: "{{ php_fpm_packages_absent }}"
+    state: absent
+    update_cache: no
+
+- name: install PHP packages listed in php_fpm_packages
+  apt:
+    pkg: "{{ php_fpm_packages }}"
+    state: present
+    update_cache: no
+
+- name: install composer if configured
+  get_url:
+    url: "https://getcomposer.org/download/{{ php_fpm_composer_version }}/composer.phar"
+    dest: "/usr/local/bin/composer"
+    checksum: "{{ php_fpm_composer_checksum | default(None) }}"
+    owner: root
+    group: root
+    mode: 0755
+  when: php_fpm_composer_version is defined
+
