@@ -26,10 +26,10 @@ pm.max_requests = {{ php_fpm_pool_max_requests | default("0") }}
 
 ; logging settings TODO can't find doc on how to send all of this to syslog
 catch_workers_output = yes
-access.log = /var/log/php/{{ php_version }}/{{ php_fpm_pool_name }}.access.log
+access.log = /var/log/php/{{ php_fpm_version }}/{{ php_fpm_pool_name }}.access.log
 php_admin_flag[log_errors] = on
-php_admin_value[error_log] = /var/log/php/{{ php_version }}/{{ php_fpm_pool_name }}.error.log
-slowlog = /var/log/php/{{ php_version }}/{{ php_fpm_pool_name }}.slow.log
+php_admin_value[error_log] = /var/log/php/{{ php_fpm_version }}/{{ php_fpm_pool_name }}.error.log
+slowlog = /var/log/php/{{ php_fpm_version }}/{{ php_fpm_pool_name }}.slow.log
 request_slowlog_timeout = 10
 
 ; additional settings

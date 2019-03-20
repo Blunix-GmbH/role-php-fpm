@@ -1,7 +1,7 @@
 ---
 - name: restart php-fpm
   service:
-    name: php{{ php_version }}-fpm
+    name: php{{ php_fpm_version }}-fpm
     state: restarted
 
 - name: restart systemd-tmpfiles-clean.timer

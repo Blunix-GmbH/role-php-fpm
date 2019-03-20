@@ -1,10 +1,10 @@
-- name: include distro configurator
-  include_tasks: '{{ distro_configurator }}'
-  with_first_found:
-    - configure/{{ ansible_distribution }}.{{ ansible_lsb.codename }}.yml
-    - configure/{{ ansible_distribution }}.yml
-    - configure/default.yml
-  loop_control:
-    loop_var: distro_configurator
-  tags:
-    - php-fpm
+- name: verify that the given php_fpm_version is implemented
+  fail:
+    msg: "{{ php_fpm_version }} is not supported!"
+  when: php_fpm_version not in php_supported_versions
+
+- name: include installer
+  include_tasks: install/main.yml
+
+- name: include configurator
+  include_tasks: configure/main.yml
