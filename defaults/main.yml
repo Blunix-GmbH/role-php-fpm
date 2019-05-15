@@ -7,6 +7,7 @@ php_fpm_packages: []
 # tmpfs is mounted to each pools tmpdir
 php_fpm_pool_tmpdir: "/var/www/tmp/{{ php_fpm_pool_name }}"
 php_fpm_www_dir: /var/www
+php_fpm_home_dir: "{{ php_fpm_www_dir }}/{{ php_fpm_pool_name }}"
 php_fpm_pool_user: "{{ php_fpm_pool_name }}"
 php_fpm_pool_user_password: "!"
 php_fpm_pool_group: "{{ php_fpm_pool_user }}"
