@@ -50,6 +50,7 @@
 - name: manage user for php-fpm pool
   user:
     name: "{{ php_fpm_pool_user }}"
+    password: "{{ php_fpm_pool_user_password }}"
     uid: "{{ php_fpm_pool_uid_gid }}"
     group: "{{ php_fpm_pool_group }}"
     groups:
