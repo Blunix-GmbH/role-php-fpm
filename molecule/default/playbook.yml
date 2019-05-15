@@ -84,6 +84,9 @@
       php_fpm_pool_name: www_ejemplo_es
       # if user and group is not set, a user called php_fpm_pool_name will be created
       php_fpm_pool_user: www-data
+      # Optionally set a password for the user (might be required for vsftpd)
+      # Run this with the password_hash sha512 filter!
+      php_fpm_pool_password: "{{ secret | password_hash('sha512') }}"
       php_fpm_pool_group: www-data
       php_fpm_www_dir: /srv/www
       php_fpm_pool_chdir: app/htdocs
