@@ -57,7 +57,7 @@
       - "{{ php_fpm_pool_group }}"
       - www-data
     append: no
-    home: "{{ php_fpm_www_dir }}/{{ php_fpm_pool_name }}"
+    home: "{{ php_fpm_home_dir }}"
     state: "{{ php_fpm_pool_state }}"
   when: php_fpm_pool_user != 'www-data'
 

@@ -31,7 +31,7 @@
       # The php-fpm www dir, such as /var/www, below which the php_fpm_pool_dir will be created as the users home directory
       # default: /var/www
       php_fpm_www_dir: /var/www
-      # the home dir for the user will be {{ php_fpm_www_dir }}/{{ php_fpm_pool_name }}/
+      # the home dir for the user will be {{ php_fpm_www_dir }}/{{ php_fpm_pool_name }} (which is combined in the variable php_fpm_home_dir by default)
       # append a custom path for a different chdir - default: omitted
       php_fpm_pool_chdir: htdocs
       # User and group ID for new user - default 1000
