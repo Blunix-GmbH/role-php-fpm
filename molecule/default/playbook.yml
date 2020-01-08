@@ -50,6 +50,12 @@
       php_fpm_pool_start_servers: 3
       php_fpm_pool_min_spare_servers: 1
       php_fpm_pool_max_spare_servers: 4
+      # will download /usr/local/bin/composer-1.8.0 and symlink it to /usr/local/wwwbin/www_beispiel_de/composer
+      php_fpm_composer_version: 1.8.0
+      # If defined, will download that version too and symlink it to /usr/local/bin/composer
+      # If not defined, will symlink php_fpm_composer_version to /usr/local/bin/composer
+      # Useful if one server runs multiple vhosts
+      php_fpm_composer_default_version: 1.9.1
       # define additional key = value variables that are templated into the pool config
       php_fpm_pool_additional_variables:
         php_value[hostname]: www.example.com
