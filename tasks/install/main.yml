@@ -54,52 +54,24 @@
     mode: 0755
   when: php_fpm_composer_default_version is defined
 
-- name: symlink composer version as default if default version is not defined
+- name: symlink composer version as default if php_fpm_composer_version is defined
   file:
     state: link
+    src: "/usr/local/bin/composer-{{ php_fpm_composer_version }}"
     dest: /usr/local/bin/composer
     force: True
-    owner: "{{ php_fpm_pool_user }}"
-    group: "{{ php_fpm_pool_group }}"
+    owner: root
+    group: root
     mode: 0755
-  when: php_fpm_composer_default_version is not defined
+  when: php_fpm_composer_version is defined
 
 - name: symlink default composer version as default if default version is defined
   file:
     state: link
+    src: "/usr/local/bin/composer-{{ php_fpm_composer_default_version }}"
     dest: /usr/local/bin/composer
     force: True
-    owner: "{{ php_fpm_pool_user }}"
-    group: "{{ php_fpm_pool_group }}"
+    owner: root
+    group: root
     mode: 0755
   when: php_fpm_composer_default_version is defined
-
-
-- name: create /usr/local/wwwbin directory for this pool
-  file:
-    state: directory
-    path: "/usr/local/wwwbin/{{ php_fpm_pool_name }}"
-    state: directory
-    owner: "{{ php_fpm_pool_user }}"
-    group: "{{ php_fpm_pool_group }}"
-    mode: 0755
-
-- name: symlink composer version for this pool
-  file:
-    state: link
-    path: "/usr/local/bin/composer-{{ php_fpm_composer_version }}"
-    dest: "/usr/local/wwwbin/{{ php_fpm_pool_name }}/composer"
-    owner: "{{ php_fpm_pool_user }}"
-    group: "{{ php_fpm_pool_group }}"
-    force: True
-    mode: 0755
-
-- name: symlink php cli version for this pool
-  file:
-    state: link
-    path: "/usr/bin/php{{ php_fpm_version }}"
-    dest: "/usr/local/wwwbin/php"
-    owner: "{{ php_fpm_pool_user }}"
-    group: "{{ php_fpm_pool_group }}"
-    force: True
-    mode: 0755
