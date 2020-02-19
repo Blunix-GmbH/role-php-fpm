@@ -1,7 +1,7 @@
 - name: verify that the given php_fpm_version is implemented
   fail:
     msg: "{{ php_fpm_version }} is not supported!"
-  when: php_fpm_version not in php_supported_versions
+  when: php_fpm_version | float not in php_supported_versions
 
 - name: include installer
   include_tasks: install/main.yml

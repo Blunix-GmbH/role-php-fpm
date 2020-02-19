@@ -1,4 +1,4 @@
-php_fpm_version: 7.2
+php_fpm_version: 7.4
 php_fpm_custom_inis: {}
 php_fpm_packages_absent: []
 php_fpm_packages: []

@@ -58,7 +58,7 @@
     php_fpm_pool_groups:
       - "{{ php_fpm_pool_group }}"
       - www-data
-  when: php_fpm_pool_state != 'absent' and php_fpm_pool_user_authorized_keys is not defined or php_fpm_pool_state != 'absent' and php_fpm_pool_user_authorized_keys == []
+  when: php_fpm_pool_user_authorized_keys is not defined or php_fpm_pool_user_authorized_keys == []
 
 - name: override the users groups if he has authorized_keys defined
   set_fact:
@@ -66,7 +66,7 @@
       - "{{ php_fpm_pool_group }}"
       - www-data
       - php_fpm_ssh
-  when: php_fpm_pool_state != 'absent' and php_fpm_pool_user_authorized_keys is defined or php_fpm_pool_state != 'absent' and php_fpm_pool_user_authorized_keys != []
+  when: php_fpm_pool_user_authorized_keys is defined or php_fpm_pool_user_authorized_keys != []
 
 - name: manage user for php-fpm pool
   user:
@@ -93,10 +93,10 @@
 - name: symlink composer version for this pool
   file:
     state: link
-    path: "/usr/local/bin/composer-{{ php_fpm_composer_version }}"
+    src: "/usr/local/bin/composer-{{ php_fpm_composer_version }}"
     dest: "/usr/local/wwwbin/{{ php_fpm_pool_name }}/composer"
-    owner: "{{ php_fpm_pool_user }}"
-    group: "{{ php_fpm_pool_group }}"
+    owner: root
+    group: root
     force: True
     mode: 0755
   when: php_fpm_pool_state != 'absent'
@@ -110,10 +110,10 @@
 - name: symlink php cli version for this pool
   file:
     state: link
-    path: "/usr/bin/php{{ php_fpm_version }}"
-    dest: "/usr/local/wwwbin/php"
-    owner: "{{ php_fpm_pool_user }}"
-    group: "{{ php_fpm_pool_group }}"
+    src: "/usr/bin/php{{ php_fpm_version }}"
+    dest: "/usr/local/wwwbin/{{ php_fpm_pool_name }}/php"
+    owner: root
+    group: root
     force: True
     mode: 0755
   when: php_fpm_pool_state != 'absent'
@@ -185,7 +185,7 @@
   with_items: "{{ php_supported_versions }}"
   loop_control:
     loop_var: php_fpm_supported_version
-  when: php_fpm_supported_version != php_fpm_version
+  when: php_fpm_supported_version != php_fpm_version | float
 
 - name: remove group for php-fpm pool if state is absent
   group:
@@ -230,7 +230,7 @@
 
 - name: remove custom php.ini files with state absent
   file:
-    path: /etc/php/{{ php_fpm_version }}/{{ php_fpm_custom_ini['path'] }}"
+    path: "/etc/php/{{ php_fpm_version }}/{{ php_fpm_custom_ini['path'] }}"
     state: absent
   when: php_fpm_custom_ini['state'] is defined and php_fpm_custom_ini['state'] == 'absent'
   with_items: "{{ php_fpm_custom_inis }}"
