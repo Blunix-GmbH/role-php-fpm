@@ -81,6 +81,43 @@
     shell: /bin/bash
   when: php_fpm_pool_user != 'www-data'
 
+- name: create /usr/local/wwwbin directory for this pool
+  file:
+    state: directory
+    path: "/usr/local/wwwbin/{{ php_fpm_pool_name }}"
+    owner: "{{ php_fpm_pool_user }}"
+    group: "{{ php_fpm_pool_group }}"
+    mode: 0755
+  when: php_fpm_pool_state != 'absent'
+
+- name: symlink composer version for this pool
+  file:
+    state: link
+    path: "/usr/local/bin/composer-{{ php_fpm_composer_version }}"
+    dest: "/usr/local/wwwbin/{{ php_fpm_pool_name }}/composer"
+    owner: "{{ php_fpm_pool_user }}"
+    group: "{{ php_fpm_pool_group }}"
+    force: True
+    mode: 0755
+  when: php_fpm_pool_state != 'absent'
+
+- name: "remove /usr/local/wwwbin/{{ php_fpm_pool_name }} for absent pools"
+  file:
+    state: absent
+    path: "/usr/local/wwwbin/{{ php_fpm_pool_name }}"
+  when: php_fpm_pool_state == 'absent'
+
+- name: symlink php cli version for this pool
+  file:
+    state: link
+    path: "/usr/bin/php{{ php_fpm_version }}"
+    dest: "/usr/local/wwwbin/php"
+    owner: "{{ php_fpm_pool_user }}"
+    group: "{{ php_fpm_pool_group }}"
+    force: True
+    mode: 0755
+  when: php_fpm_pool_state != 'absent'
+
 - name: set up defined authorized_keys for the user
   authorized_key:
     user: "{{ php_fpm_pool_user }}"
@@ -140,6 +177,15 @@
     group: root
   notify: restart php-fpm
   when: php_fpm_pool_state != 'absent'
+
+- name: make sure the custom php-fpm pool is only present for the specified version
+  file:
+    state: absent
+    path: "/etc/php/{{ php_fpm_supported_version }}/fpm/pool.d/{{ php_fpm_pool_name }}.conf"
+  with_items: "{{ php_supported_versions }}"
+  loop_control:
+    loop_var: php_fpm_supported_version
+  when: php_fpm_supported_version != php_fpm_version
 
 - name: remove group for php-fpm pool if state is absent
   group:
