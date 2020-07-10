@@ -1,12 +1,16 @@
----
 - name: Converge
   hosts: all
   become: True
   vars:
-    php_fpm_version: 7.1
+
+    php_fpm_version: 7.4
+
     # Setup custom php.ini style config files
     php_fpm_custom_inis:
-      - path: fpm/conf.d/99-custom.ini
+      - name: 99-custom.ini
+        targets:
+          - fpm
+          - cli
         state: present
         vars:
           MySQL:
@@ -24,7 +28,10 @@
             max_input_vars: 1000
             post_max_size: 128M
 
-      - path: fpm/conf.d/98-custom.ini
+      - name: 98-custom.ini
+        targets:
+          - fpm
+          - cli
         state: absent
 
   roles:

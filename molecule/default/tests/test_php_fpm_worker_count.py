@@ -17,12 +17,12 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     ["www_ejemplo_es", 2],
     ["www_esempio_it", 2],
 ])
-# pythons psutil does not return the full process name (only "php-fpm7.1", not "php-fpm: pool www_beispiel_de") hence I use "ps aux"  # noqa: E501
+# pythons psutil does not return the full process name (only "php-fpm7.4", not "php-fpm: pool www_beispiel_de") hence I use "ps aux"  # noqa: E501
 def test_php_info_variable(host, domain, worker_count):
     full_process_list = host.run('ps aux').stdout
     fpm_process_list = []
     for process_line in full_process_list.split('\n'):
-        eline = process_line.encode('utf-8')
+        eline = str(process_line.encode('utf-8'))
         if domain in eline:
             fpm_process_list.append(eline)
     process_count = len(fpm_process_list)

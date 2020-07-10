@@ -1,12 +1,18 @@
----
 - name: Converge
   hosts: all
   become: True
   vars:
-    php_fpm_version: 7.1
+
+    php_fpm_version: 7.4
+
     # Setup custom php.ini style config files
     php_fpm_custom_inis:
-      - path: fpm/conf.d/99-custom.ini
+      - name: 99-custom.ini
+        # templates /etc/php/{{ php_fpm_version }}/{{ target }}/conf.d/{{ path }}
+        targets:
+          - fpm
+          - cli
+        state: present
         vars:
           MySQL:
             mysql.allow_local_infile: On
@@ -31,7 +37,8 @@
       # The php-fpm www dir, such as /var/www, below which the php_fpm_pool_dir will be created as the users home directory
       # default: /var/www
       php_fpm_www_dir: /var/www
-      # the home dir for the user will be {{ php_fpm_www_dir }}/{{ php_fpm_pool_name }} (which is combined in the variable php_fpm_home_dir by default)
+      # the home dir for the user will be {{ php_fpm_www_dir }}/{{ php_fpm_pool_name }} (which is combined in the variable
+      # php_fpm_home_dir by default)
       # append a custom path for a different chdir - default: omitted
       php_fpm_pool_chdir: htdocs
       # User and group ID for new user - default 1000
@@ -51,11 +58,11 @@
       php_fpm_pool_min_spare_servers: 1
       php_fpm_pool_max_spare_servers: 4
       # will download /usr/local/bin/composer-1.8.0 and symlink it to /usr/local/wwwbin/www_beispiel_de/composer
-      php_fpm_composer_version: 1.8.0
+      php_fpm_composer_version: 1.10.8
       # If defined, will download that version too and symlink it to /usr/local/bin/composer
       # If not defined, will symlink php_fpm_composer_version to /usr/local/bin/composer
       # Useful if one server runs multiple vhosts
-      php_fpm_composer_default_version: 1.9.1
+      php_fpm_composer_default_version: 1.10.0
       # define additional key = value variables that are templated into the pool config
       php_fpm_pool_additional_variables:
         php_value[hostname]: www.example.com
@@ -128,7 +135,10 @@
         php_admin_value[max_input_time]: 300
         php_admin_value[max_execution_time]: 300
 
-  tasks:
+
+
+  post_tasks:
+
     - name: create a php.info file for the tests
       copy:
         content: |
@@ -162,4 +172,4 @@
     - name: install libfcgi0ldbl for testing the socket
       apt:
         name: libfcgi0ldbl
-        update_cache: no
+        update_cache: False

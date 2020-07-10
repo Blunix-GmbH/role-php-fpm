@@ -1,27 +1,27 @@
-# Role PHP-FPM
+# blunix_role-php-fpm
+This Ansible role installs and configures php-fpm.
 
-This role installs and configures PHP-FPM.
-
-# Example Playbook
-
-Please refer to `molecule/install/playbook/yml` for a comprehensive example.
-
-# License
-
-Apache-2.0
+This role is part of the Blunix hosting stack. Learn how to use it at <a href="https://man.blunix.com/" target="_blank">man.blunix.com</a>.
 
 # Author Information
-
-Service and support for orchestrated hosting environments,
-continuous integration/deployment/delivery and various Linux
-and open-source technology stacks are available from:
-
-```
 Blunix GmbH - Consulting for Linux Hosting 24/7
-Glogauer Straße 21
-10999 Berlin - Germany
 
-Web: www.blunix.org
-Email: service[at]blunix.org
-Phone: (+49) 30 / 12 08 39 90
+Blunix GmbH provides 24/7 support with Service Level Agreements for Debian Linux based hosting environments which are automated with Ansible.
+
 ```
+Blunix GmbH
+Glogauer Straße 21
+10999 Berlin
+Germany
+
+Website: https://www.blunix.com
+E-Mail:  contact@blunix.com
+gpg key: https://www.blunix.com/contact-blunix-com-gpg-key
+Signal:  +49 30 629 318 76
+Matrix:  #blunix:matrix.org
+```
+
+# License
+Apache-2.0
+
+Please refer to the LICENSE file in the root of this repository.
