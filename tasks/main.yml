@@ -3,8 +3,8 @@
     msg: "{{ php_fpm_version }} is not supported!"
   when: php_fpm_version | float not in php_supported_versions
 
-- name: include installer
-  include_tasks: install/main.yml
+- name: include install.yml
+  include_tasks: install.yml
 
-- name: include configurator
-  include_tasks: configure/main.yml
+- name: include configure.yml
+  include_tasks: configure.yml

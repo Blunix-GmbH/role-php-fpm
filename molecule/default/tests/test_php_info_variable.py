@@ -30,7 +30,7 @@ def test_php_info_variable(host, domain, variable, value, path):
     found_variable = False
     found_value = False
     for line in stdout.split('\r\n'):
-        eline = line.encode('utf-8')
+        eline = str(line.encode('utf-8'))
         if variable in eline:
             found_variable = True
             if value in eline:

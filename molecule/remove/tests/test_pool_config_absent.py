@@ -5,7 +5,7 @@ import testinfra.utils.ansible_runner
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
-PHP_FPM_VERSION = '7.1'
+PHP_FPM_VERSION = '7.4'
 PHP_FPM_POOLS_ABSENT = [
     'www_voorbeeld_nl',
     'www_primjer_bh',

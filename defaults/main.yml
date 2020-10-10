@@ -14,3 +14,4 @@ php_fpm_pool_group: "{{ php_fpm_pool_user }}"
 php_fpm_pool_uid_gid: 1000
 # Determines if the pool is present or not
 php_fpm_pool_state: present
+

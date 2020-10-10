@@ -1,35 +1,19 @@
-- name: install dependencies
-  apt:
-    pkg: apt-transport-https
-    state: present
-
-- name: import APT key
-  get_url:
-    url: https://packages.sury.org/php/apt.gpg
-    dest: /etc/apt/trusted.gpg.d/php.gpg
-
-- name: add APT repository
-  apt_repository:
-    repo: "deb https://packages.sury.org/php/ {{ ansible_lsb.codename }} main"
-    filename: /etc/apt/sources.list.d/php
-    update_cache: True
-
 - name: install PHP-FPM
   apt:
-    pkg: "php{{ php_fpm_version }}-fpm"
+    name: "php{{ php_fpm_version }}-fpm"
     state: present
 
 - name: uninstall PHP packages listed in php_fpm_packages_absent
   apt:
-    pkg: "{{ php_fpm_packages_absent }}"
+    name: "{{ php_fpm_packages_absent }}"
     state: absent
-    update_cache: no
+    update_cache: False
 
 - name: install PHP packages listed in php_fpm_packages
   apt:
-    pkg: "{{ php_fpm_packages }}"
+    name: "{{ php_fpm_packages }}"
     state: present
-    update_cache: no
+    update_cache: False
 
 
 - name: download composer if defined
@@ -53,17 +37,6 @@
     group: root
     mode: 0755
   when: php_fpm_composer_default_version is defined
-
-- name: symlink composer version as default if php_fpm_composer_version is defined
-  file:
-    state: link
-    src: "/usr/local/bin/composer-{{ php_fpm_composer_version }}"
-    dest: /usr/local/bin/composer
-    force: True
-    owner: root
-    group: root
-    mode: 0755
-  when: php_fpm_composer_version is defined
 
 - name: symlink default composer version as default if default version is defined
   file:
