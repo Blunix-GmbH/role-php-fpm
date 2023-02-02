@@ -47,7 +47,7 @@
 
 # TODO do I need to remove the group here or will removing the group do that?
 
-- name: create a php_ssh group
+- name: create group php_fpm_ssh
   group:
     name: php_fpm_ssh
     state: present
