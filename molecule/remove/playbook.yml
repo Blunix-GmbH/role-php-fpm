@@ -40,7 +40,7 @@
       php_fpm_pool_state: present
       php_fpm_pool_name: www_voorbeeld_nl
       php_fpm_pool_chdir: htdocs
-      php_fpm_pool_uid_gid: 1053
+      php_fpm_pool_uid: 1053
       php_fpm_pool_tmpdir_tmpfs_size: 128
       php_fpm_pool_pm: static
       php_fpm_pool_max_children: 2
@@ -61,7 +61,7 @@
       php_fpm_pool_state: absent
       php_fpm_pool_name: www_voorbeeld_nl
       php_fpm_pool_chdir: htdocs
-      php_fpm_pool_uid_gid: 1053
+      php_fpm_pool_uid: 1053
       php_fpm_pool_tmpdir_tmpfs_size: 128
       php_fpm_pool_pm: static
       php_fpm_pool_max_children: 2
@@ -84,7 +84,7 @@
       php_fpm_pool_state: absent
       php_fpm_pool_name: www_primjer_bh
       php_fpm_pool_chdir: htdocs
-      php_fpm_pool_uid_gid: 1054
+      php_fpm_pool_uid: 1054
       php_fpm_pool_tmpdir_tmpfs_size: 128
       php_fpm_pool_pm: static
       php_fpm_pool_max_children: 2
@@ -107,7 +107,7 @@
       php_fpm_pool_name: www_example_com
       php_fpm_www_dir: /var/www
       php_fpm_pool_chdir: htdocs
-      php_fpm_pool_uid_gid: 1050
+      php_fpm_pool_uid: 1050
       php_fpm_pool_tmpdir_tmpfs_size: 128
       php_fpm_pool_tmpdir: "/var/www/tmp/{{ php_fpm_pool_name }}"
       php_fpm_pool_pm: dynamic

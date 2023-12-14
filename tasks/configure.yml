@@ -25,7 +25,7 @@
 - name: create group for php-fpm pool
   group:
     name: "{{ php_fpm_pool_group }}"
-    gid: "{{ php_fpm_pool_uid_gid }}"
+    gid: "{{ php_fpm_pool_gid }}"
     system: true
     state: present
   when: php_fpm_pool_group != 'www-data' and php_fpm_pool_state != 'absent'
@@ -72,7 +72,7 @@
   user:
     name: "{{ php_fpm_pool_user }}"
     password: "{{ php_fpm_pool_user_password }}"
-    uid: "{{ php_fpm_pool_uid_gid }}"
+    uid: "{{ php_fpm_pool_uid }}"
     group: "{{ php_fpm_pool_group }}"
     groups: "{{ php_fpm_pool_groups }}"
     append: False
@@ -170,7 +170,7 @@
     src: tmpfs
     path: "{{ php_fpm_pool_tmpdir }}"
     state: mounted
-    opts: "defaults,noexec,nosuid,size={{ php_fpm_pool_tmpdir_tmpfs_size }},uid={{ php_fpm_pool_uid_gid }},gid={{ php_fpm_pool_uid_gid }},mode=0770"
+    opts: "defaults,noexec,nosuid,size={{ php_fpm_pool_tmpdir_tmpfs_size }},uid={{ php_fpm_pool_uid }},gid={{ php_fpm_pool_gid }},mode=0770"
   when: php_fpm_pool_tmpdir_tmpfs_size is defined and php_fpm_pool_state != 'absent'
 
 - name: template custom php-fpm pool
@@ -195,7 +195,7 @@
 - name: remove group for php-fpm pool if state is absent
   group:
     name: "{{ php_fpm_pool_group }}"
-    gid: "{{ php_fpm_pool_uid_gid }}"
+    gid: "{{ php_fpm_pool_gid }}"
     state: absent
   when: php_fpm_pool_group != 'www-data' and php_fpm_pool_state == 'absent'
 

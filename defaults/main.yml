@@ -11,7 +11,8 @@ php_fpm_home_dir: "{{ php_fpm_www_dir }}/{{ php_fpm_pool_name }}"
 php_fpm_pool_user: "{{ php_fpm_pool_name }}"
 php_fpm_pool_user_password: "!"
 php_fpm_pool_group: "{{ php_fpm_pool_user }}"
-php_fpm_pool_uid_gid: 1000
+php_fpm_pool_uid: "{{ php_fpm_pool_uid_gid | default('1000') }}"
+php_fpm_pool_gid: "{{ php_fpm_pool_uid }}"
 # Determines if the pool is present or not
 php_fpm_pool_state: present
 
